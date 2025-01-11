@@ -19,10 +19,10 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore ./ot-backend-assessment/OT.Assessment.sln
+        run: dotnet restore ./OT.Assessment.sln
 
       - name: Build
-        run: dotnet build ./ot-backend-assessment/OT.Assessment.sln --configuration Release
+        run: dotnet build ./OT.Assessment.sln --configuration Release
 
       - name: Test
-        run: dotnet test ./ot-backend-assessment/OT.Assessment.sln --configuration Release
+        run: dotnet test ./OT.Assessment.sln --configuration Release
