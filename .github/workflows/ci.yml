@@ -1,0 +1,28 @@
+name: OT.Assessment .NET Build and Test (Windows)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ./ot-backend-assessment/OT.Assessment.sln
+
+      - name: Build
+        run: dotnet build ./ot-backend-assessment/OT.Assessment.sln --configuration Release
+
+      - name: Test
+        run: dotnet test ./ot-backend-assessment/OT.Assessment.sln --configuration Release
