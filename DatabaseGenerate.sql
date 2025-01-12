@@ -78,6 +78,11 @@ CREATE OR ALTER PROCEDURE sp_InsertCasinoWager
 AS
 BEGIN
     BEGIN TRY
+		IF NOT EXISTS (SELECT 1 FROM Player WHERE AccountId = @AccountId)
+		BEGIN
+			INSERT INTO Player (AccountId, Username)
+			VALUES (@AccountId, @Username);
+		END
         INSERT INTO CasinoWager (
             WagerId, Theme, [Provider], GameName, TransactionId, BrandId, AccountId, Username,
             ExternalReferenceId, TransactionTypeId, Amount, CreatedDateTime, NumberOfBets,
