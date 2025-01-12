@@ -6,9 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+  </ItemGroup>
+	
 	<ItemGroup>
     <ProjectReference Include="..\OT.Assessment.Domain\OT.Assessment.Domain.csproj" />
-    <ProjectReference Include="..\OT.Assessment.Repository\OT.Assessment.Repository.csproj" />
   </ItemGroup>
 
 </Project>

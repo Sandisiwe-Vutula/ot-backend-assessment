@@ -112,14 +112,11 @@ BEGIN
         DECLARE @TotalPages INT = CEILING(CAST(@TotalRecords AS FLOAT) / @PageSize);
 
         -- Fetching paginated data, with my descretion for retrieving necessary data 
-		-- Rather than retrieving all columns, many of which are unnecessary for the API payload
+		-- Rather than retrieving all columns, many of which are unnecessary for the payload
         SELECT 
             WagerId,
-			Theme,
             GameName AS [game],
             [Provider] AS [provider],
-			Username,
-			NumberOfBets
             Amount,
             CreatedDateTime AS [createdDate]
         FROM CasinoWager
