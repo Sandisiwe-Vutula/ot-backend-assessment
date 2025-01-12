@@ -79,7 +79,7 @@ AS
 BEGIN
     BEGIN TRY
         INSERT INTO CasinoWager (
-            WagerId, Theme, Provider, GameName, TransactionId, BrandId, AccountId, Username,
+            WagerId, Theme, [Provider], GameName, TransactionId, BrandId, AccountId, Username,
             ExternalReferenceId, TransactionTypeId, Amount, CreatedDateTime, NumberOfBets,
             CountryCode, SessionData, Duration
         )

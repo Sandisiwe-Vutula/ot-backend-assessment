@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using OT.Assessment.Consumer.Services;
+using OT.Assessment.Repository.Implementation;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(config =>
@@ -10,7 +13,14 @@ var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
         //configure services
-      
+        services.Configure<RabbitMqSettings>(context.Configuration.GetSection("RabbitMQ"));
+        services.AddTransient<SqlConnection>(provider =>
+        {
+            var connectionString = context.Configuration.GetConnectionString("DatabaseConnection");
+            return new SqlConnection(connectionString);
+        });
+        services.AddScoped<IPlayerRepository, PlayerRepository>();
+        services.AddHostedService<RabbitMqConsumerService>();
     })
     .Build();
 
