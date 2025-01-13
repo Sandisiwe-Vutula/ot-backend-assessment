@@ -20,6 +20,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\OT.Assessment.Domain\OT.Assessment.Domain.csproj" />
 	  <ProjectReference Include="..\..\OT.Assessment.Repository\OT.Assessment.Repository.csproj" />
+	  <ProjectReference Include="..\..\OT.Assessment.Services\OT.Assessment.Services.csproj" />
 	</ItemGroup>
 
 

@@ -8,7 +8,7 @@
         private readonly IModel _channel;
         private readonly string _queueName;
 
-        public RabbitMqConsumerService(ILogger<RabbitMqConsumerService> logger, IPlayerRepository repository,IOptions<RabbitMqSettings> options)
+        public RabbitMqConsumerService(ILogger<RabbitMqConsumerService> logger, IPlayerRepository repository, IOptions<RabbitMqSettings> options)
         {
             _logger = logger;
             _repository = repository;
@@ -19,26 +19,31 @@
                 HostName = settings.Host,
                 Port = settings.Port,
                 UserName = settings.Username,
-                Password = settings.Password
+                Password = settings.Password,
+                RequestedHeartbeat = TimeSpan.FromSeconds(60),
+                NetworkRecoveryInterval = TimeSpan.FromSeconds(10),
+                AutomaticRecoveryEnabled = true
             };
 
-            _connection = factory.CreateConnection();
-            _channel = _connection.CreateModel();
-            _queueName = settings.QueueName;
+            try
+            {
+                _connection = factory.CreateConnection();
+                _channel = _connection.CreateModel();
+                _queueName = settings.QueueName;
+                _channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
-            _channel.QueueDeclare(
-                queue: _queueName,
-                durable: true,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
-
-            _logger.LogInformation("RabbitMQ Consumer initialized and connected to queue {QueueName}.", _queueName);
+                _logger.LogInformation("Successfully connected to RabbitMQ at {Host}:{Port} and queue {QueueName}.", settings.Host, settings.Port, _queueName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to establish connection to RabbitMQ.");
+                throw;
+            }
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            stoppingToken.ThrowIfCancellationRequested();
+            _logger.LogInformation("RabbitMQ Consumer started and connected to queue {QueueName}.", _queueName);
 
             var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += async (model, ea) =>
@@ -49,25 +54,29 @@
                 try
                 {
                     var wager = JsonSerializer.Deserialize<CasinoWager>(message);
-
-                    if (wager != null)
+                    if (wager == null)
                     {
-                        await ProcessMessageAsync(wager);
+                        _logger.LogWarning("Received invalid wager.");
+                        return;
                     }
+
+                    await ProcessWagerAsync(wager);
+
                     _channel.BasicAck(ea.DeliveryTag, false);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error processing message: {Message}", message);
-                    _channel.BasicNack(ea.DeliveryTag, false, true); // Requeue the message
+                    _logger.LogError(ex, "Error processing wager.");
+                    _channel.BasicNack(ea.DeliveryTag, false, true);
                 }
             };
 
             _channel.BasicConsume(queue: _queueName, autoAck: false, consumer: consumer);
+
             return Task.CompletedTask;
         }
 
-        private async Task ProcessMessageAsync(CasinoWager wager)
+        private async Task ProcessWagerAsync(CasinoWager wager)
         {
             try
             {

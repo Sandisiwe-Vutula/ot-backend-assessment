@@ -7,3 +7,4 @@ global using OT.Assessment.Domain.DTOs;
 global using OT.Assessment.Domain.Entities;
 global using OT.Assessment.Repository.Constants;
 global using OT.Assessment.Repository.Contract;
+global using Microsoft.Extensions.Logging;

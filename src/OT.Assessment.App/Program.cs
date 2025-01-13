@@ -1,3 +1,6 @@
+using System.Data;
+using OT.Assessment.Shared.Configs;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
@@ -10,20 +13,25 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
+builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMQ"));
+
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
-builder.Services.AddSingleton(_ =>
+builder.Services.AddSingleton<IRabbitMQPublisherService, RabbitMQPublisherService>();
+builder.Services.AddTransient<IDbConnection>(sp =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection");
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var connectionString = configuration.GetConnectionString("DatabaseConnection");
 
     if (builder.Environment.IsDevelopment())
     {
-        var builder = new SqlConnectionStringBuilder(connectionString)
+        var sqlConnectionBuilder = new SqlConnectionStringBuilder(connectionString)
         {
             TrustServerCertificate = true
         };
-        connectionString = builder.ConnectionString;
+        connectionString = sqlConnectionBuilder.ConnectionString;
     }
+
     return new SqlConnection(connectionString);
 });
 

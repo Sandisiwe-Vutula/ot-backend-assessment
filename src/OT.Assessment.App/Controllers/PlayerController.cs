@@ -46,7 +46,6 @@
             }
         }
 
-        // GET api/player/topSpenders?count=10
         [HttpGet("topSpenders")]
         public async Task<IActionResult> GetTopSpenders([FromQuery] int count = 10, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
