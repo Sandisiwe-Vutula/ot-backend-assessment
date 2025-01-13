@@ -1,5 +1,6 @@
 // Global using directives
 global using System.Text;
+global using System.Data;
 global using System.Text.Json;
 global using Microsoft.Extensions.Options;
 global using OT.Assessment.Domain.Entities;

@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-var host = Host.CreateDefaultBuilder(args)
+﻿var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(config =>
     {
         config.SetBasePath(Directory.GetCurrentDirectory())

@@ -116,8 +116,7 @@ BEGIN
 
         DECLARE @TotalPages INT = CEILING(CAST(@TotalRecords AS FLOAT) / @PageSize);
 
-        -- Fetching paginated data, with my descretion for retrieving necessary data 
-		-- Rather than retrieving all columns, many of which are unnecessary for the payload
+        -- Fetching paginated data, with the descretion for retrieving necessary data 
         SELECT 
             WagerId,
             GameName AS [game],
