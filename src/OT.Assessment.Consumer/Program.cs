@@ -14,6 +14,11 @@
             var connectionString = context.Configuration.GetConnectionString("DatabaseConnection");
             return new SqlConnection(connectionString);
         });
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = context.Configuration.GetSection("Redis")["ConnectionString"];
+            options.InstanceName = context.Configuration.GetSection("Redis")["InstanceName"];
+        });
         services.AddScoped<IPlayerRepository, PlayerRepository>();
         services.AddScoped<IRabbitMQPublisherService, RabbitMQPublisherService>();
         services.AddHostedService<RabbitMqConsumerService>();

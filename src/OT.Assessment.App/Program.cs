@@ -1,6 +1,3 @@
-using System.Data;
-using OT.Assessment.Shared.Configs;
-
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
@@ -35,6 +32,12 @@ builder.Services.AddTransient<IDbConnection>(sp =>
     return new SqlConnection(connectionString);
 });
 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    var redisConfig = builder.Configuration.GetSection("Redis");
+    options.Configuration = redisConfig["ConnectionString"];
+    options.InstanceName = redisConfig["InstanceName"];
+});
 
 var app = builder.Build();
 

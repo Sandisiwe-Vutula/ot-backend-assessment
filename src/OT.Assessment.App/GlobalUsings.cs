@@ -9,3 +9,5 @@ global using OT.Assessment.Repository.Implementation;
 global using OT.Assessment.Services.Contract;
 global using OT.Assessment.Services.Implementation;
 global using OT.Assessment.Domain.Entities;
+global using System.Data;
+global using OT.Assessment.Shared.Configs;

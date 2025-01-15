@@ -51,9 +51,22 @@ var getCasinoWagersScenario = Scenario.Create("get_casino_wagers", async context
     return Response.Fail(response.Message, response.StatusCode, response.SizeBytes);
 });
 
+var cacheHitScenario = Scenario.Create("test_cache_hit", async context =>
+{
+    var playerId = "AF796258-352B-A965-FAA9-2435C8C9C979";
+    var page = 1;
+    var pageSize = 10;
+    var url = $"https://localhost:7120/api/player/{playerId}/wagers?page={page}&pageSize={pageSize}";
+    using var httpClient = new HttpClient();
+    var request = Http.CreateRequest("GET", url).WithHeader("Accept", "application/json");
+    var response = await Http.Send(httpClient, request);
+    if (response.StatusCode == "OK") return Response.Ok();
+    return Response.Fail(response.Message, response.StatusCode, response.SizeBytes);
+});
+
 // Register and running all scenarios
 NBomberRunner
-    .RegisterScenarios(postWagersScenario, getTopSpendersScenario, getCasinoWagersScenario)
+    .RegisterScenarios(postWagersScenario, getTopSpendersScenario, getCasinoWagersScenario, cacheHitScenario)
     .WithWorkerPlugins(new HttpMetricsPlugin(new[] { HttpVersion.Version1 }))
     .WithoutReports()
     .Run();
